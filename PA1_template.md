@@ -116,11 +116,11 @@ newdata$wday<-as.factor(newdata$wday)
 
 ```r
 #create plot
-par(mfrow = c(2,1))
-plot(intervals,tapply(newdata$steps[newdata$wday=="weekend"],
-                      newdata$interval[newdata$wday=="weekend"],mean),"l",ylab="")
-plot(intervals,tapply(newdata$steps[newdata$wday!="weekend"],
-                      newdata$interval[newdata$wday!="weekend"],mean),"l",ylab="")
+#par(mfrow = c(2,1))
+#plot(intervals,tapply(newdata$steps[newdata$wday=="weekend"],
+#                      newdata$interval[newdata$wday=="weekend"],mean),"l",ylab="")
+#plot(intervals,tapply(newdata$steps[newdata$wday!="weekend"],
+#                      newdata$interval[newdata$wday!="weekend"],mean),"l",ylab="")
 
 require(lattice)
 ```
@@ -129,15 +129,13 @@ require(lattice)
 ## Loading required package: lattice
 ```
 
-![plot of chunk unnamed-chunk-11](./PA1_template_files/figure-html/unnamed-chunk-111.png) 
-
 ```r
 xyplot(steps ~ interval | wday, data = newdata, 
        layout = c(1,2), type = "l", xlab="Interval", ylab="Number of steps"
        )
 ```
 
-![plot of chunk unnamed-chunk-11](./PA1_template_files/figure-html/unnamed-chunk-112.png) 
+![plot of chunk unnamed-chunk-11](./PA1_template_files/figure-html/unnamed-chunk-11.png) 
 
 ```r
    #    panel = function(x, y, ...) {
