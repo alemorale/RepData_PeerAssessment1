@@ -12,7 +12,6 @@ activity <- read.csv('activity.csv')
 ```
 
 
-
 ## What is mean total number of steps taken per day?
 ```{r,echo=TRUE}
 totaldailysteps<-tapply(activity$steps,activity$date,sum)
@@ -43,31 +42,50 @@ intervalmax
 ```{r,echo=TRUE}
 TotalNas <- (dim(activity)[1]-dim(activityNoNa)[1])
 sum(is.na(activity$steps))
+```
+
+```{r,echo=TRUE}
 #impute missing values with average of interval
 #create new data frame with imputed missing values
-
+activity$meanStepsperInterval<-rep(round(meanstepsperinterval),61)
+activity$steps[is.na(activity$steps)] <- 
+    activity$meanStepsperInterval[is.na(activity$steps)]
+newdata <- subset(activity, select = steps:interval)
 ```
 
 ```{r,echo=TRUE}
-#change to imputed values
-totaldailysteps<-tapply(activity$steps,activity$date,sum)
-hist(totaldailysteps)
+newtotaldailysteps<-tapply(newdata$steps,newdata$date,sum)
+hist(newtotaldailysteps)
 ```
 
 ```{r,echo=TRUE}
-mean(totaldailysteps,na.rm=TRUE)
-median(totaldailysteps,na.rm = TRUE)
+mean(newtotaldailysteps,na.rm=TRUE)
+median(newtotaldailysteps,na.rm = TRUE)
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
 ```{r,echo=TRUE}
 #create categorical variable
-activity$wday<-weekdays(as.Date(activity$date))
-activity$wday[activity$wday=="Sunday" | activity$wday=="Saturday"]<-"weekend"
-activity$wday[activity$wday!="weekend"]<-"weekday"
+newdata$wday<-weekdays(as.Date(newdata$date))
+newdata$wday[newdata$wday=="Sunday" | newdata$wday=="Saturday"]<-"weekend"
+newdata$wday[newdata$wday!="weekend"]<-"weekday"
+newdata$wday<-as.factor(newdata$wday)
 ```
 
 ```{r,echo=TRUE}
 #create plot
+par(mfrow = c(2,1))
+plot(intervals,tapply(newdata$steps[newdata$wday=="weekend"],
+                      newdata$interval[newdata$wday=="weekend"],mean),"l",ylab="")
+plot(intervals,tapply(newdata$steps[newdata$wday!="weekend"],
+                      newdata$interval[newdata$wday!="weekend"],mean),"l",ylab="")
 
+require(lattice)
+xyplot(steps ~ interval | wday, data = newdata, 
+       layout = c(1,2), type = "l", xlab="Interval", ylab="Number of steps"
+       )
+   #    panel = function(x, y, ...) {
+#               panel.xyplot(interval, steps, ...)  ## First call default panel function
+#               panel.lmline(interval, steps, col = 2)  ## Overlay a simple linear regression line
+#       })
 ```

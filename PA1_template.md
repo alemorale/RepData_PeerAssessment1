@@ -8,7 +8,6 @@ activity <- read.csv('activity.csv')
 ```
 
 
-
 ## What is mean total number of steps taken per day?
 
 ```r
@@ -69,23 +68,27 @@ sum(is.na(activity$steps))
 ## [1] 2304
 ```
 
+
 ```r
 #impute missing values with average of interval
 #create new data frame with imputed missing values
+activity$meanStepsperInterval<-rep(round(meanstepsperinterval),61)
+activity$steps[is.na(activity$steps)] <- 
+    activity$meanStepsperInterval[is.na(activity$steps)]
+newdata <- subset(activity, select = steps:interval)
 ```
 
 
 ```r
-#change to imputed values
-totaldailysteps<-tapply(activity$steps,activity$date,sum)
-hist(totaldailysteps)
+newtotaldailysteps<-tapply(newdata$steps,newdata$date,sum)
+hist(newtotaldailysteps)
 ```
 
-![plot of chunk unnamed-chunk-7](./PA1_template_files/figure-html/unnamed-chunk-7.png) 
+![plot of chunk unnamed-chunk-8](./PA1_template_files/figure-html/unnamed-chunk-8.png) 
 
 
 ```r
-mean(totaldailysteps,na.rm=TRUE)
+mean(newtotaldailysteps,na.rm=TRUE)
 ```
 
 ```
@@ -93,23 +96,52 @@ mean(totaldailysteps,na.rm=TRUE)
 ```
 
 ```r
-median(totaldailysteps,na.rm = TRUE)
+median(newtotaldailysteps,na.rm = TRUE)
 ```
 
 ```
-## [1] 10765
+## [1] 10762
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
 ```r
 #create categorical variable
-activity$wday<-weekdays(as.Date(activity$date))
-activity$wday[activity$wday=="Sunday" | activity$wday=="Saturday"]<-"weekend"
-activity$wday[activity$wday!="weekend"]<-"weekday"
+newdata$wday<-weekdays(as.Date(newdata$date))
+newdata$wday[newdata$wday=="Sunday" | newdata$wday=="Saturday"]<-"weekend"
+newdata$wday[newdata$wday!="weekend"]<-"weekday"
+newdata$wday<-as.factor(newdata$wday)
 ```
 
 
 ```r
 #create plot
+par(mfrow = c(2,1))
+plot(intervals,tapply(newdata$steps[newdata$wday=="weekend"],
+                      newdata$interval[newdata$wday=="weekend"],mean),"l",ylab="")
+plot(intervals,tapply(newdata$steps[newdata$wday!="weekend"],
+                      newdata$interval[newdata$wday!="weekend"],mean),"l",ylab="")
+
+require(lattice)
+```
+
+```
+## Loading required package: lattice
+```
+
+![plot of chunk unnamed-chunk-11](./PA1_template_files/figure-html/unnamed-chunk-111.png) 
+
+```r
+xyplot(steps ~ interval | wday, data = newdata, 
+       layout = c(1,2), type = "l", xlab="Interval", ylab="Number of steps"
+       )
+```
+
+![plot of chunk unnamed-chunk-11](./PA1_template_files/figure-html/unnamed-chunk-112.png) 
+
+```r
+   #    panel = function(x, y, ...) {
+#               panel.xyplot(interval, steps, ...)  ## First call default panel function
+#               panel.lmline(interval, steps, col = 2)  ## Overlay a simple linear regression line
+#       })
 ```
