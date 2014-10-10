@@ -73,19 +73,12 @@ newdata$wday<-as.factor(newdata$wday)
 ```
 
 ```{r,echo=TRUE}
-#create plot
-#par(mfrow = c(2,1))
-#plot(intervals,tapply(newdata$steps[newdata$wday=="weekend"],
-#                      newdata$interval[newdata$wday=="weekend"],mean),"l",ylab="")
-#plot(intervals,tapply(newdata$steps[newdata$wday!="weekend"],
-#                      newdata$interval[newdata$wday!="weekend"],mean),"l",ylab="")
-
 require(lattice)
-xyplot(steps ~ interval | wday, data = newdata, 
-       layout = c(1,2), type = "l", xlab="Interval", ylab="Number of steps"
-       )
-   #    panel = function(x, y, ...) {
-#               panel.xyplot(interval, steps, ...)  ## First call default panel function
-#               panel.lmline(interval, steps, col = 2)  ## Overlay a simple linear regression line
-#       })
+xyplot(steps ~ interval | wday, data = newdata,       
+       layout = c(1,2), type = "l", col="blue",
+       xlab="Interval", ylab="Number of steps",
+       ylim=c(-15,240), 
+       panel = function(x, y, ...) {
+           panel.average(x, y, ...,horizontal=FALSE)
+           })
 ```

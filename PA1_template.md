@@ -1,4 +1,9 @@
-# Reproducible Research: Peer Assessment 1
+---
+title: "Reproducible Research: Peer Assessment 1"
+output: 
+  html_document:
+    keep_md: true
+---
 
 
 ## Loading and preprocessing the data
@@ -15,7 +20,7 @@ totaldailysteps<-tapply(activity$steps,activity$date,sum)
 hist(totaldailysteps)
 ```
 
-![plot of chunk unnamed-chunk-2](./PA1_template_files/figure-html/unnamed-chunk-2.png) 
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2.png) 
 
 
 ```r
@@ -43,7 +48,7 @@ meanstepsperinterval<-tapply(activityNoNa$steps,activityNoNa$interval,mean)
 plot(intervals,meanstepsperinterval,type="l")
 ```
 
-![plot of chunk unnamed-chunk-4](./PA1_template_files/figure-html/unnamed-chunk-4.png) 
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4.png) 
 
 
 
@@ -84,7 +89,7 @@ newtotaldailysteps<-tapply(newdata$steps,newdata$date,sum)
 hist(newtotaldailysteps)
 ```
 
-![plot of chunk unnamed-chunk-8](./PA1_template_files/figure-html/unnamed-chunk-8.png) 
+![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8.png) 
 
 
 ```r
@@ -115,31 +120,14 @@ newdata$wday<-as.factor(newdata$wday)
 
 
 ```r
-#create plot
-#par(mfrow = c(2,1))
-#plot(intervals,tapply(newdata$steps[newdata$wday=="weekend"],
-#                      newdata$interval[newdata$wday=="weekend"],mean),"l",ylab="")
-#plot(intervals,tapply(newdata$steps[newdata$wday!="weekend"],
-#                      newdata$interval[newdata$wday!="weekend"],mean),"l",ylab="")
-
 require(lattice)
+xyplot(steps ~ interval | wday, data = newdata,       
+       layout = c(1,2), type = "l", col="blue",
+       xlab="Interval", ylab="Number of steps",
+       ylim=c(-15,240), 
+       panel = function(x, y, ...) {
+           panel.average(x, y, ...,horizontal=FALSE)
+           })
 ```
 
-```
-## Loading required package: lattice
-```
-
-```r
-xyplot(steps ~ interval | wday, data = newdata, 
-       layout = c(1,2), type = "l", xlab="Interval", ylab="Number of steps"
-       )
-```
-
-![plot of chunk unnamed-chunk-11](./PA1_template_files/figure-html/unnamed-chunk-11.png) 
-
-```r
-   #    panel = function(x, y, ...) {
-#               panel.xyplot(interval, steps, ...)  ## First call default panel function
-#               panel.lmline(interval, steps, col = 2)  ## Overlay a simple linear regression line
-#       })
-```
+![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11.png) 
